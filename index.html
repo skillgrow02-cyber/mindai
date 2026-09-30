@@ -1,172 +1,68 @@
+const SUPABASE_URL = "https://mfprkadlwryvjneccexh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_VNWjcRwLlR02o-_xZePTyw_KACkvo3r  
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MindAI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-margin:0;
-font-family:Arial;
-background:#0b0b12;
-color:white;
-text-align:center;
-}
+  <title>MindAI</title>
 
-header{
-padding:20px;
-font-size:26px;
-font-weight:bold;
-color:#8b5cf6;
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-h1{
-margin-top:70px;
-font-size:40px;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-p{
-color:#aaa;
-}
+    body {
+      background: #080808;
+      color: white;
+      min-height: 100vh;
+    }
 
-.box{
-margin:30px auto;
-padding:20px;
-width:85%;
-max-width:600px;
-background:#171722;
-border-radius:18px;
-}
+    header {
+      padding: 20px;
+      border-bottom: 1px solid #222;
+      font-size: 24px;
+      font-weight: bold;
+    }
 
-textarea{
-width:95%;
-height:100px;
-background:#0d0d15;
-color:white;
-border:1px solid #444;
-border-radius:10px;
-padding:10px;
-font-size:16px;
-box-sizing:border-box;
-}
+    .purple {
+      color: #9b5cff;
+    }
 
-button{
-width:100%;
-margin-top:15px;
-padding:15px;
-border:0;
-border-radius:10px;
-background:#8b5cf6;
-color:white;
-font-size:17px;
-font-weight:bold;
-}
+    .container {
+      width: 90%;
+      max-width: 500px;
+      margin: 50px auto;
+    }
 
-button:disabled{
-opacity:.6;
-}
+    h1 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
 
-#result{
-margin-top:20px;
-}
+    .subtitle {
+      text-align: center;
+      color: #999;
+      margin-bottom: 30px;
+    }
 
-#result img{
-width:100%;
-border-radius:12px;
-}
+    .box {
+      background: #111;
+      border: 1px solid #292929;
+      border-radius: 18px;
+      padding: 25px;
+    }
 
-.download{
-display:block;
-margin-top:12px;
-padding:12px;
-background:#8b5cf6;
-color:white;
-border-radius:10px;
-text-decoration:none;
-}
-</style>
-</head>
-
-<body>
-
-<header>✨ MindAI</header>
-
-<h1>Create with AI</h1>
-
-<p>Turn your ideas into amazing images.</p>
-
-<div class="box">
-
-<textarea id="prompt"
-placeholder="अपनी image के बारे में लिखें..."></textarea>
-
-<button id="generateBtn" onclick="generate()">
-✨ Generate Image
-</button>
-
-<div id="result">
-आपकी AI image यहाँ दिखाई देगी।
-</div>
-
-</div>
-
-<script>
-
-async function generate(){
-
-const prompt = document.getElementById("prompt").value.trim();
-const result = document.getElementById("result");
-const button = document.getElementById("generateBtn");
-
-if(!prompt){
-alert("पहले prompt लिखें");
-return;
-}
-
-button.disabled = true;
-button.innerText = "⏳ Image बन रही है...";
-result.innerHTML = "कृपया थोड़ा इंतज़ार करें...";
-
-try{
-
-const response = await fetch("/api/generate",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-prompt:prompt
-})
-});
-
-const data = await response.json();
-
-if(!response.ok){
-throw new Error(data.error || "Image generation failed");
-}
-
-result.innerHTML = `
-<img src="${data.image}" alt="AI Generated Image">
-
-<a class="download"
-href="${data.image}"
-download="mindai-image.png">
-📥 Download Image
-</a>
-`;
-
-}catch(error){
-
-result.innerHTML = "❌ " + error.message;
-
-}
-
-button.disabled = false;
-button.innerText = "✨ Generate Image";
-
-}
-
-</script>
-
-</body>
-</html>
+    input {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      border: 1px solid #333
