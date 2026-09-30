@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MindAI</title>
+<style>
+body{margin:0;font-family:Arial;background:#0b0b12;color:white;text-align:center}
+header{padding:20px;font-size:26px;font-weight:bold;color:#8b5cf6}
+h1{margin-top:70px;font-size:40px}
+p{color:#aaa}
+.box{margin:30px auto;padding:20px;width:85%;max-width:600px;background:#171722;border-radius:18px}
+textarea{width:95%;height:100px;background:#0d0d15;color:white;border:1px solid #444;border-radius:10px;padding:10px;font-size:16px}
+button{width:100%;margin-top:15px;padding:15px;border:0;border-radius:10px;background:#8b5cf6;color:white;font-size:17px;font-weight:bold}
+</style>
+</head>
+<body>
+
+<header>✨ MindAI</header>
+
+<h1>Create with AI</h1>
+<p>Turn your ideas into amazing images.</p>
+
+<div class="box">
+<textarea id="prompt" placeholder="अपनी image के बारे में लिखें..."></textarea>
+<button onclick="generate()">✨ Generate Image</button>
+<p id="result">आपकी AI image यहाँ दिखाई देगी।</p>
+</div>
+
+<script>
+function generate(){
+let p=document.getElementById("prompt").value;
+if(!p){alert("पहले prompt लिखें");return}
+document.getElementById("result").innerHTML="🚀 Prompt तैयार है!<br>"+p;
+}
+</script>
+
+</body>
+</html>
