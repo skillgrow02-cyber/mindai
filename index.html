@@ -1,66 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindAI</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#080808;color:#fff;min-height:100vh}
+header{padding:20px;border-bottom:1px solid #222;font-size:24px;font-weight:bold}
+.purple{color:#9b5cff}.container{width:90%;max-width:500px;margin:50px auto}
+h1{text-align:center;font-size:36px;margin-bottom:10px}.subtitle{text-align:center;color:#999;margin-bottom:30px}
+.box{background:#111;border:1px solid #292929;border-radius:18px;padding:25px}
+input{width:100%;padding:15px;margin-bottom:12px;border-radius:10px;border:1px solid #333;background:#181818;color:#fff;font-size:16px;outline:none}
+button{width:100%;padding:15px;border:0;border-radius:10px;background:#8b4dff;color:#fff;font-size:16px;font-weight:bold}
+.switch{text-align:center;margin-top:18px;color:#aaa}.switch span{color:#a66bff;cursor:pointer}
+.message{text-align:center;margin-top:15px;color:#aaa;line-height:1.5}
+.dashboard{display:none;margin-top:25px}.credits{background:#171020;border:1px solid #492879;padding:18px;border-radius:12px;text-align:center;margin-bottom:15px}.logout{background:#222}
+</style>
+</head>
+<body>
+<header>✨ <span class="purple">MindAI</span></header>
+<div class="container">
+<h1 id="title">Create Account</h1>
+<p class="subtitle" id="subtitle">Start creating with MindAI</p>
+<div class="box">
+<input type="email" id="email" placeholder="Email address">
+<input type="password" id="password" placeholder="Password">
+<button id="mainButton" onclick="signup()">Create Account</button>
+<div class="switch"><span id="switchText">Already have an account?</span> <span onclick="toggleMode()" id="switchButton">Login</span></div>
+<div class="message" id="message"></div>
+<div class="dashboard" id="dashboard">
+<div class="credits">🎁 Your Credits: <strong id="creditCount">5</strong></div>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+</div>
+</div>
+<script>
+const SUPABASE_URL="https://mfprkadlwryvjneccexh.supabase.co";
+const SUPABASE_KEY="sb_publishable_VNWjcRwLlR02o-_xZePTyw_KACkvo3r";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let loginMode=false;
 
-  <title>MindAI</title>
+function toggleMode(){
+ loginMode=!loginMode;
+ document.getElementById("title").innerText=loginMode?"Welcome Back":"Create Account";
+ document.getElementById("subtitle").innerText=loginMode?"Login to your MindAI account":"Start creating with MindAI";
+ document.getElementById("mainButton").innerText=loginMode?"Login":"Create Account";
+ document.getElementById("mainButton").onclick=loginMode?login:signup;
+ document.getElementById("switchText").innerText=loginMode?"Don't have an account?":"Already have an account?";
+ document.getElementById("switchButton").innerText=loginMode?"Create Account":"Login";
+ document.getElementById("message").innerText="";
+}
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+async function signup(){
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ const message=document.getElementById("message");
+ if(!email||!password){message.innerText="Email और password डालो।";return}
+ if(password.length<6){message.innerText="Password कम से कम 6 characters का होना चाहिए।";return}
+ message.innerText="Account बनाया जा रहा है...";
+ const {error}=await supabaseClient.auth.signUp({email,password});
+ message.innerText=error?error.message:"✅ Account बन गया! अपना email verify करो।";
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+async function login(){
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ const message=document.getElementById("message");
+ if(!email||!password){message.innerText="Email और password डालो।";return}
+ message.innerText="Login हो रहा है...";
+ const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+ if(error){message.innerText=error.message;return}
+ message.innerText="✅ Login successful!";
+ await loadProfile();
+}
 
-    body {
-      background: #080808;
-      color: white;
-      min-height: 100vh;
-    }
+async function loadProfile(){
+ const {data:{user}}=await supabaseClient.auth.getUser();
+ if(!user)return;
+ const {data,error}=await supabaseClient.from("profiles").select("credits").eq("id",user.id).single();
+ if(error){console.log(error);return}
+ document.getElementById("creditCount").innerText=data.credits;
+ document.getElementById("dashboard").style.display="block";
+}
 
-    header {
-      padding: 20px;
-      border-bottom: 1px solid #222;
-      font-size: 24px;
-      font-weight: bold;
-    }
+async function logout(){
+ await supabaseClient.auth.signOut();
+ document.getElementById("dashboard").style.display="none";
+ document.getElementById("message").innerText="Logged out.";
+}
 
-    .purple {
-      color: #9b5cff;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 500px;
-      margin: 50px auto;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #999;
-      margin-bottom: 30px;
-    }
-
-    .box {
-      background: #111;
-      border: 1px solid #292929;
-      border-radius: 18px;
-      padding: 25px;
-    }
-
-    input {
-      width: 100%;
-      padding: 15px;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      border: 1px solid #333
+async function checkUser(){
+ const {data:{session}}=await supabaseClient.auth.getSession();
+ if(session)await loadProfile();
+}
+checkUser();
+</script>
+</body>
+</html>
