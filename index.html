@@ -3,99 +3,701 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>MindAI</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:#080808;color:#fff;min-height:100vh}
-header{padding:20px;border-bottom:1px solid #222;font-size:24px;font-weight:bold}
-.purple{color:#9b5cff}.container{width:90%;max-width:500px;margin:50px auto}
-h1{text-align:center;font-size:36px;margin-bottom:10px}.subtitle{text-align:center;color:#999;margin-bottom:30px}
-.box{background:#111;border:1px solid #292929;border-radius:18px;padding:25px}
-input{width:100%;padding:15px;margin-bottom:12px;border-radius:10px;border:1px solid #333;background:#181818;color:#fff;font-size:16px;outline:none}
-button{width:100%;padding:15px;border:0;border-radius:10px;background:#8b4dff;color:#fff;font-size:16px;font-weight:bold}
-.switch{text-align:center;margin-top:18px;color:#aaa}.switch span{color:#a66bff;cursor:pointer}
-.message{text-align:center;margin-top:15px;color:#aaa;line-height:1.5}
-.dashboard{display:none;margin-top:25px}.credits{background:#171020;border:1px solid #492879;padding:18px;border-radius:12px;text-align:center;margin-bottom:15px}.logout{background:#222}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#080808;
+  color:white;
+  min-height:100vh;
+}
+
+header{
+  padding:20px;
+  border-bottom:1px solid #222;
+  font-size:26px;
+  font-weight:bold;
+}
+
+.purple{
+  color:#9b5cff;
+}
+
+.container{
+  width:92%;
+  max-width:650px;
+  margin:40px auto;
+}
+
+.auth-box,
+.dashboard{
+  background:#111;
+  border:1px solid #292929;
+  border-radius:20px;
+  padding:25px;
+}
+
+h1{
+  text-align:center;
+  font-size:34px;
+  margin-bottom:10px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#999;
+  margin-bottom:25px;
+}
+
+input,
+textarea{
+  width:100%;
+  padding:15px;
+  margin-bottom:12px;
+  border-radius:10px;
+  border:1px solid #333;
+  background:#181818;
+  color:white;
+  font-size:16px;
+  outline:none;
+}
+
+textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  background:#8b4dff;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#9b5cff;
+}
+
+.switch{
+  text-align:center;
+  margin-top:18px;
+  color:#aaa;
+}
+
+.switch span{
+  color:#a66bff;
+  cursor:pointer;
+}
+
+.message{
+  text-align:center;
+  margin-top:15px;
+  color:#aaa;
+  line-height:1.5;
+}
+
+#dashboard{
+  display:none;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.topbar h2{
+  font-size:24px;
+}
+
+.credits{
+  background:#171020;
+  border:1px solid #492879;
+  padding:15px;
+  border-radius:12px;
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.generator{
+  background:#0d0d0d;
+  border:1px solid #292929;
+  border-radius:16px;
+  padding:20px;
+}
+
+.generator h3{
+  font-size:22px;
+  margin-bottom:8px;
+}
+
+.generator p{
+  color:#999;
+  margin-bottom:18px;
+}
+
+.generate{
+  margin-top:5px;
+}
+
+.logout{
+  width:auto;
+  padding:10px 16px;
+  background:#222;
+}
+
+.logout:hover{
+  background:#333;
+}
+
+#result{
+  margin-top:20px;
+  text-align:center;
+}
+
+#result img{
+  width:100%;
+  border-radius:15px;
+  border:1px solid #333;
+}
+
+.loading{
+  color:#a66bff;
+  margin-top:15px;
+}
+
+.hidden{
+  display:none;
+}
+
+@media(max-width:500px){
+  h1{
+    font-size:30px;
+  }
+
+  .container{
+    margin-top:30px;
+  }
+
+  .topbar h2{
+    font-size:20px;
+  }
+}
 </style>
 </head>
+
 <body>
-<header>✨ <span class="purple">MindAI</span></header>
+
+<header>
+✨ <span class="purple">MindAI</span>
+</header>
+
 <div class="container">
+
+<!-- AUTH -->
+<div id="authBox" class="auth-box">
+
 <h1 id="title">Create Account</h1>
-<p class="subtitle" id="subtitle">Start creating with MindAI</p>
-<div class="box">
-<input type="email" id="email" placeholder="Email address">
-<input type="password" id="password" placeholder="Password">
-<button id="mainButton" onclick="signup()">Create Account</button>
-<div class="switch"><span id="switchText">Already have an account?</span> <span onclick="toggleMode()" id="switchButton">Login</span></div>
+
+<p class="subtitle" id="subtitle">
+Start creating with MindAI
+</p>
+
+<input
+type="email"
+id="email"
+placeholder="Email address"
+>
+
+<input
+type="password"
+id="password"
+placeholder="Password"
+>
+
+<button id="mainButton" onclick="signup()">
+Create Account
+</button>
+
+<div class="switch">
+<span id="switchText">
+Already have an account?
+</span>
+
+<span onclick="toggleMode()" id="switchButton">
+Login
+</span>
+</div>
+
 <div class="message" id="message"></div>
-<div class="dashboard" id="dashboard">
-<div class="credits">🎁 Your Credits: <strong id="creditCount">5</strong></div>
-<button class="logout" onclick="logout()">Logout</button>
+
 </div>
+
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="dashboard">
+
+<div class="topbar">
+
+<h2>👋 MindAI Dashboard</h2>
+
+<button class="logout" onclick="logout()">
+Logout
+</button>
+
 </div>
+
+<div class="credits">
+🎁 Your Credits:
+<strong id="creditCount">5</strong>
 </div>
+
+
+<!-- IMAGE GENERATOR -->
+<div class="generator">
+
+<h3>🖼️ AI Image Generator</h3>
+
+<p>
+Describe the image you want to create.
+</p>
+
+<textarea
+id="prompt"
+placeholder="Example: A beautiful Indian village at sunrise, cinematic 3D cartoon style..."
+></textarea>
+
+<button class="generate" onclick="generateImage()">
+✨ Generate Image
+</button>
+
+<div id="loading" class="loading hidden">
+⏳ Image बन रही है...
+</div>
+
+<div id="result"></div>
+
+</div>
+
+</div>
+
+</div>
+
+
 <script>
-const SUPABASE_URL="https://mfprkadlwryvjneccexh.supabase.co";
-const SUPABASE_KEY="sb_publishable_VNWjcRwLlR02o-_xZePTyw_KACkvo3r";
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let loginMode=false;
+
+/* =========================
+   SUPABASE CONFIG
+========================= */
+
+/*
+IMPORTANT:
+अपनी पुरानी SUPABASE_URL और SUPABASE_KEY
+वाली lines यहाँ वही रखें।
+*/
+
+const SUPABASE_URL =
+"https://mfprkadlwryvjneccexh.supabase.co";
+
+
+
+const SUPABASE_KEY = 
+ "sb_publishable_VNWjcRwLlR02o-_xZePTyw_KACkvo3r";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+
+let loginMode = false;
+
+
+/* =========================
+   LOGIN / SIGNUP SWITCH
+========================= */
 
 function toggleMode(){
- loginMode=!loginMode;
- document.getElementById("title").innerText=loginMode?"Welcome Back":"Create Account";
- document.getElementById("subtitle").innerText=loginMode?"Login to your MindAI account":"Start creating with MindAI";
- document.getElementById("mainButton").innerText=loginMode?"Login":"Create Account";
- document.getElementById("mainButton").onclick=loginMode?login:signup;
- document.getElementById("switchText").innerText=loginMode?"Don't have an account?":"Already have an account?";
- document.getElementById("switchButton").innerText=loginMode?"Create Account":"Login";
- document.getElementById("message").innerText="";
+
+loginMode = !loginMode;
+
+const title =
+document.getElementById("title");
+
+const subtitle =
+document.getElementById("subtitle");
+
+const button =
+document.getElementById("mainButton");
+
+const switchText =
+document.getElementById("switchText");
+
+const switchButton =
+document.getElementById("switchButton");
+
+
+if(loginMode){
+
+title.innerText = "Welcome Back";
+
+subtitle.innerText =
+"Login to your MindAI account";
+
+button.innerText = "Login";
+
+button.onclick = login;
+
+switchText.innerText =
+"Don't have an account?";
+
+switchButton.innerText =
+"Create Account";
+
+}else{
+
+title.innerText = "Create Account";
+
+subtitle.innerText =
+"Start creating with MindAI";
+
+button.innerText =
+"Create Account";
+
+button.onclick = signup;
+
+switchText.innerText =
+"Already have an account?";
+
+switchButton.innerText =
+"Login";
+
 }
+
+document.getElementById("message")
+.innerText = "";
+
+}
+
+
+/* =========================
+   SIGNUP
+========================= */
 
 async function signup(){
- const email=document.getElementById("email").value.trim();
- const password=document.getElementById("password").value;
- const message=document.getElementById("message");
- if(!email||!password){message.innerText="Email और password डालो।";return}
- if(password.length<6){message.innerText="Password कम से कम 6 characters का होना चाहिए।";return}
- message.innerText="Account बनाया जा रहा है...";
- const {error}=await supabaseClient.auth.signUp({email,password});
- message.innerText=error?error.message:"✅ Account बन गया! अपना email verify करो।";
+
+const email =
+document.getElementById("email")
+.value.trim();
+
+const password =
+document.getElementById("password")
+.value;
+
+const message =
+document.getElementById("message");
+
+
+if(!email || !password){
+
+message.innerText =
+"Email और password डालो।";
+
+return;
 }
+
+
+if(password.length < 6){
+
+message.innerText =
+"Password कम से कम 6 characters का होना चाहिए।";
+
+return;
+}
+
+
+message.innerText =
+"Account बनाया जा रहा है...";
+
+
+const {error} =
+await supabaseClient.auth.signUp({
+email:email,
+password:password
+});
+
+
+if(error){
+
+message.innerText =
+error.message;
+
+return;
+}
+
+
+message.innerText =
+"✅ Account बन गया! अपना email verify करो।";
+
+}
+
+
+/* =========================
+   LOGIN
+========================= */
 
 async function login(){
- const email=document.getElementById("email").value.trim();
- const password=document.getElementById("password").value;
- const message=document.getElementById("message");
- if(!email||!password){message.innerText="Email और password डालो।";return}
- message.innerText="Login हो रहा है...";
- const {error}=await supabaseClient.auth.signInWithPassword({email,password});
- if(error){message.innerText=error.message;return}
- message.innerText="✅ Login successful!";
- await loadProfile();
+
+const email =
+document.getElementById("email")
+.value.trim();
+
+const password =
+document.getElementById("password")
+.value;
+
+const message =
+document.getElementById("message");
+
+
+if(!email || !password){
+
+message.innerText =
+"Email और password डालो।";
+
+return;
 }
+
+
+message.innerText =
+"Login हो रहा है...";
+
+
+const {error} =
+await supabaseClient.auth
+.signInWithPassword({
+email:email,
+password:password
+});
+
+
+if(error){
+
+message.innerText =
+error.message;
+
+return;
+}
+
+
+message.innerText =
+"";
+
+
+await loadProfile();
+
+}
+
+
+/* =========================
+   LOAD PROFILE
+========================= */
 
 async function loadProfile(){
- const {data:{user}}=await supabaseClient.auth.getUser();
- if(!user)return;
- const {data,error}=await supabaseClient.from("profiles").select("credits").eq("id",user.id).single();
- if(error){console.log(error);return}
- document.getElementById("creditCount").innerText=data.credits;
- document.getElementById("dashboard").style.display="block";
+
+const {
+data:{user}
+} =
+await supabaseClient.auth.getUser();
+
+
+if(!user){
+
+return;
 }
+
+
+const {data,error} =
+await supabaseClient
+.from("profiles")
+.select("credits")
+.eq("id",user.id)
+.single();
+
+
+if(error){
+
+console.log(error);
+
+return;
+}
+
+
+document.getElementById("creditCount")
+.innerText =
+data.credits;
+
+
+document.getElementById("authBox")
+.style.display =
+"none";
+
+
+document.getElementById("dashboard")
+.style.display =
+"block";
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
 
 async function logout(){
- await supabaseClient.auth.signOut();
- document.getElementById("dashboard").style.display="none";
- document.getElementById("message").innerText="Logged out.";
+
+await supabaseClient.auth.signOut();
+
+document.getElementById("dashboard")
+.style.display =
+"none";
+
+document.getElementById("authBox")
+.style.display =
+"block";
+
 }
 
-async function checkUser(){
- const {data:{session}}=await supabaseClient.auth.getSession();
- if(session)await loadProfile();
+
+/* =========================
+   AI IMAGE GENERATOR
+========================= */
+
+async function generateImage(){
+
+const prompt =
+document.getElementById("prompt")
+.value.trim();
+
+const result =
+document.getElementById("result");
+
+const loading =
+document.getElementById("loading");
+
+
+if(!prompt){
+
+result.innerHTML =
+"⚠️ पहले image का prompt लिखो।";
+
+return;
 }
+
+
+loading.classList.remove("hidden");
+
+result.innerHTML = "";
+
+
+try{
+
+const response =
+await fetch("/api/generate",{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+prompt:prompt
+})
+
+});
+
+
+const data =
+await response.json();
+
+
+if(!response.ok){
+
+throw new Error(
+data.error ||
+"Image generation failed"
+);
+
+}
+
+
+if(data.image){
+
+result.innerHTML =
+`<img src="${data.image}" alt="Generated Image">`;
+
+}else{
+
+throw new Error(
+"No image returned"
+);
+
+}
+
+}catch(error){
+
+result.innerHTML =
+"❌ " + error.message;
+
+}
+
+
+loading.classList.add("hidden");
+
+}
+
+
+/* =========================
+   CHECK SESSION
+========================= */
+
+async function checkUser(){
+
+const {
+data:{session}
+} =
+await supabaseClient.auth.getSession();
+
+
+if(session){
+
+await loadProfile();
+
+}
+
+}
+
+
 checkUser();
+
 </script>
+
 </body>
 </html>
